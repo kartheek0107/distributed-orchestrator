@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  scheduler:
+    build:
+      context: ../..
+      dockerfile: deployments/docker/Dockerfile.scheduler
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_ADDRESS=redis:6379
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: deployments/docker/Dockerfile.worker
+    depends_on:
+      - scheduler
+      - redis
+    environment:
+      - SCHEDULER_ADDRESS=scheduler:50051
+      - REDIS_ADDRESS=redis:6379
+    deploy:
+      replicas: 3
+
+volumes:
+  redis-data:

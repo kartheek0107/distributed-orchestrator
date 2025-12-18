@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package orchestrator;
+
+option go_package = "github.com/kartheek0107/go-task-orchestrator/api/proto";
+
+// Task service for scheduler-worker communication
+service TaskOrchestrator {
+  rpc AssignTask(TaskRequest) returns (TaskResponse);
+  rpc ReportHeartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+  rpc ReportCompletion(CompletionRequest) returns (CompletionResponse);
+}
+
+message TaskRequest {
+  string job_id = 1;
+  string command = 2;
+  int32 timeout = 3;
+  int32 priority = 4;
+}
+
+message TaskResponse {
+  bool accepted = 1;
+  string message = 2;
+}
+
+message HeartbeatRequest {
+  string worker_id = 1;
+  int64 timestamp = 2;
+  int32 active_tasks = 3;
+}
+
+message HeartbeatResponse {
+  bool acknowledged = 1;
+}
+
+message CompletionRequest {
+  string job_id = 1;
+  string worker_id = 2;
+  bool success = 3;
+  string result = 4;
+  string error = 5;
+}
+
+message CompletionResponse {
+  bool acknowledged = 1;
+}

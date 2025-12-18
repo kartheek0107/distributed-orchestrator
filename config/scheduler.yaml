@@ -1,0 +1,22 @@
+server:
+  rest_port: 8080
+  grpc_port: 50051
+  host: "0.0.0.0"
+
+redis:
+  address: "localhost:6379"
+  password: ""
+  db: 0
+
+orchestrator:
+  heartbeat_interval: 5s
+  heartbeat_timeout: 15s
+  max_retry_attempts: 3
+  job_timeout: 300s
+
+rate_limiting:
+  max_jobs_per_minute: 1000
+  burst_size: 100
+
+logging:
+  level: "info"
