@@ -36,23 +36,6 @@ I wanted to understand:
 
 ---
 
-## How it works
-User submits job                 Scheduler                      Workers
-|                              |                              |
-|--POST /jobs/---------------->|                              |
-|                              |                              |
-|                              |--Stores in Redis----------->|
-|                              |                              |
-|                              |<-Worker sends heartbeat------|
-|                              |                              |
-|                              |--Assigns task via gRPC------>|
-|                              |                              |
-|                              |                        [executes task]
-|                              |                              |
-|                              |<--Reports completion---------|
-|                              |                              |
-|<-Returns job status----------|                              |
-
 ### The interesting parts
 
 **1. Heartbeat mechanism**  
