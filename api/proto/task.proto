@@ -2,13 +2,34 @@ syntax = "proto3";
 
 package orchestrator;
 
-option go_package = "github.com/kartheek0107/go-task-orchestrator/api/proto";
+option go_package = "github.com/kartheek0107/distributed-orchestrator/api/proto";
 
 // Task service for scheduler-worker communication
-service TaskOrchestrator {
-  rpc AssignTask(TaskRequest) returns (TaskResponse);
+
+service CoordinatorService{
+  rpc SubmitJob(JobRequest) returns (JobResponse);
   rpc ReportHeartbeat(HeartbeatRequest) returns (HeartbeatResponse);
   rpc ReportCompletion(CompletionRequest) returns (CompletionResponse);
+}
+
+service WorkerService{
+  rpc StartTask(TaskRequest) returns (TaskResponse);
+}
+
+
+message JobRequest {
+  string job_id = 1;
+  string command = 2;
+  int32 timeout = 3;
+  int32 priority = 4;
+}
+
+message JobResponse {
+  string job_id = 1;
+  string worker_id = 2;
+  bool success = 3;
+  string result = 4;
+  string error = 5;
 }
 
 message TaskRequest {
