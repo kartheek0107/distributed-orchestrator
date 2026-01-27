@@ -52,14 +52,15 @@ func sendHeartbeat(client pb.CoordinatorServiceClient) {
 		_, err := client.ReportHeartbeat(context.Background(), req)
 		if err != nil {
 			log.Printf("Failed to send heartbeat: %v", err)
+		} else {
+			log.Println("Heartbeat sent")
 		}
-		log.Println("Heartbeat sent")
 	}
 }
 
 func main() {
 	// TODO: Implement worker
-	ln, err := net.Listen("tcp", ":50051")
+	ln, err := net.Listen("tcp", ":50052")
 
 	if err != nil {
 		log.Fatal("Failed to listen: %v", err)
@@ -68,9 +69,9 @@ func main() {
 	grpcserver := grpc.NewServer()
 	pb.RegisterWorkerServiceServer(grpcserver, &WorkerServer{})
 
-	log.Println("Worker server listening on :50051")
+	log.Println("Worker server listening on :50052")
 
-	grpcclient, err := grpc.NewClient("localhost:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	grpcclient, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	pb.NewCoordinatorServiceClient(grpcclient)
 
