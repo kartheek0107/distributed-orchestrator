@@ -8,6 +8,7 @@ import (
 	"time"
 
 	pb "github.com/kartheek0107/distributed-orchestrator/api/proto"
+	"github.com/kartheek0107/distributed-orchestrator/internal/queue"
 	"github.com/kartheek0107/distributed-orchestrator/internal/scheduler"
 	"google.golang.org/grpc"
 )
@@ -22,7 +23,8 @@ func main() {
 
 	grpcserver := grpc.NewServer()
 
-	sched := scheduler.NewScheduler()
+	RedisQueue := queue.NewRedisQueue("localhost:6379", "", 0)
+	sched := scheduler.NewScheduler(RedisQueue)
 
 	handler := scheduler.NewJobHandler(sched)
 
@@ -33,6 +35,8 @@ func main() {
 			log.Fatalf("failed to start REST API server: %v", err)
 		}
 	}()
+
+	go sched.StartDistributor(context.Background())
 
 	go sched.StartMonitor(context.Background(), 5*time.Second, 10*time.Second)
 
